@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:controller="com.battleship.client.controller.LobbyController"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      alignment="CENTER" spacing="30" style="-fx-background-color: #1e1e2e;">
+    <padding><Insets top="50" right="50" bottom="50" left="50"/></padding>
+
+    <Label text="Морской бой" style="-fx-font-size: 40px; -fx-text-fill: #89b4fa; -fx-font-weight: bold"/>
+    <Label fx:id="welcomeLabel" style="-fx-font-size: 24px; -fx-text-fill: #cdd6f4;"/>
+
+    <VBox spacing="20" alignment="CENTER">
+        <Button text="Новая игра" onAction="#onNewGame"
+                style="-fx-background-color: #a6e3a1; -fx-font-size: 18px; -fx-pref-width: 300; -fx-pref-height: 60;"/>
+        <Button text="Продолжить сохранённую" onAction="#onContinue"
+                style="-fx-background-color: #f9e2af; -fx-font-size: 18px; -fx-pref-width: 300; -fx-pref-height: 60;"/>
+        <Button text="Выйти" onAction="#onExit"
+                style="-fx-background-color: #f38ba8; -fx-font-size: 18px; -fx-pref-width: 300; -fx-pref-height: 60;"/>
+    </VBox>
+
+    <Label fx:id="statusLabel" style="-fx-text-fill: #f38ba8;" minHeight="30"/>
+</VBox>

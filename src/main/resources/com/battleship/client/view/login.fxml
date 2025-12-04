@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:controller="com.battleship.client.controller.LoginController"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      alignment="CENTER" spacing="20" style="-fx-background-color: #1e1e2e;">
+    <padding><Insets top="50" right="50" bottom="50" left="50"/></padding>
+
+    <Label text="Морской бой" style="-fx-font-size: 36px; -fx-text-fill: #89b4fa; -fx-font-weight: bold"/>
+
+    <TextField fx:id="loginField" promptText="Логин" prefWidth="300" style="-fx-background-color: #313244; -fx-text-fill: white; -fx-prompt-text-fill: #6c7086;"/>
+    <PasswordField fx:id="passwordField" promptText="Пароль" prefWidth="300" style="-fx-background-color: #313244; -fx-text-fill: white; -fx-prompt-text-fill: #6c7086;"/>
+
+    <HBox spacing="15" alignment="CENTER">
+        <Button text="Войти" onAction="#onLogin"
+                style="-fx-background-color: #89b4fa; -fx-text-fill: black; -fx-font-weight: bold;" prefWidth="140"/>
+        <Button text="Регистрация" onAction="#onRegister"
+                style="-fx-background-color: #a6e3a1; -fx-text-fill: black; -fx-font-weight: bold;" prefWidth="140"/>
+    </HBox>
+
+    <Label fx:id="statusLabel" style="-fx-text-fill: #f38ba8; -fx-font-size: 14px;" minHeight="30"/>
+</VBox>
