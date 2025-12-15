@@ -18,8 +18,4 @@ public class Message implements Serializable {
     public MessageType getType() { return type; }
     public Object getPayload() { return payload; }
 
-    @SuppressWarnings("unchecked")
-    public <T> T payload() {
-        return (T) payload;
-    }
 }

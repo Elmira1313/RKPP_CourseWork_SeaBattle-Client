@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Rectangle?>
+
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<VBox fx:controller="com.battleship.client.controller.PlacementController"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      spacing="20" alignment="CENTER" style="-fx-background-color: #1e1e2e;">
+    <padding><Insets top="30" right="50" bottom="30" left="50"/></padding>
+
+    <Label text="РАССТАНОВКА КОРАБЛЕЙ" style="-fx-font-size: 38px; -fx-text-fill: #89b4fa; -fx-font-weight: bold"/>
+
+    <HBox spacing="60" alignment="CENTER">
+
+        <!-- Список кораблей -->
+        <VBox spacing="15" alignment="CENTER" style="-fx-background-color: #313244; -fx-background-radius: 15; -fx-padding: 20;">
+            <Label text="Доступные корабли" style="-fx-font-size: 24px; -fx-text-fill: #cdd6f4; -fx-font-weight: bold"/>
+            <Label text="Выберите корабль → клик на поле. R — поворот" style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"/>
+
+            <VBox spacing="12">
+                <!-- 4 -->
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <Rectangle fx:id="ship4Sample" width="160" height="40"
+                               fill="#89b4fa" stroke="#585b70" strokeWidth="3"
+                               userData="4" onMouseClicked="#onShipSelect"/>
+                    <Label fx:id="count4Label" text="×1" style="-fx-font-size: 20px; -fx-text-fill: #cdd6f4;"/>
+                </HBox>
+
+                <!-- 3 -->
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <Rectangle fx:id="ship3Sample" width="120" height="40"
+                               fill="#89b4fa" stroke="#585b70" strokeWidth="3"
+                               userData="3" onMouseClicked="#onShipSelect"/>
+                    <Label fx:id="count3Label" text="×2" style="-fx-font-size: 20px; -fx-text-fill: #cdd6f4;"/>
+                </HBox>
+
+                <!-- 2 -->
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <Rectangle fx:id="ship2Sample" width="80" height="40"
+                               fill="#89b4fa" stroke="#585b70" strokeWidth="3"
+                               userData="2" onMouseClicked="#onShipSelect"/>
+                    <Label fx:id="count2Label" text="×3" style="-fx-font-size: 20px; -fx-text-fill: #cdd6f4;"/>
+                </HBox>
+
+                <!-- 1 -->
+                <HBox spacing="15" alignment="CENTER_LEFT">
+                    <Rectangle fx:id="ship1Sample" width="40" height="40"
+                               fill="#89b4fa" stroke="#585b70" strokeWidth="3"
+                               userData="1" onMouseClicked="#onShipSelect"/>
+                    <Label fx:id="count1Label" text="×4" style="-fx-font-size: 20px; -fx-text-fill: #cdd6f4;"/>
+                </HBox>
+            </VBox>
+
+            <Separator prefWidth="300"/>
+
+            <Button text="Заполнить случайно" onAction="#onRandomPlacement"
+                    style="-fx-background-color: #f9e2af; -fx-font-weight: bold; -fx-pref-width: 300; -fx-pref-height: 50;"/>
+            <Button text="Очистить поле" onAction="#onClearBoard"
+                    style="-fx-background-color: #f38ba8; -fx-font-weight: bold; -fx-pref-width: 300; -fx-pref-height: 50;"/>
+            <VBox spacing="10">
+                <Label text="Выберите сложность ИИ:" style="-fx-font-size: 18px; -fx-text-fill: #cdd6f4;"/>
+                <ComboBox fx:id="difficultyCombo" prefWidth="300" promptText="Выберите сложность">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Лёгкий"/>
+                            <String fx:value="Средний"/>
+                            <String fx:value="Сложный"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+            </VBox>
+        </VBox>
+
+        <!-- Поле с подписями -->
+        <VBox spacing="15" alignment="CENTER">
+            <Label text="Ваше поле" style="-fx-font-size: 24px; -fx-text-fill: #cdd6f4;"/>
+            <GridPane>
+                <columnConstraints>
+                    <ColumnConstraints hgrow="NEVER" maxWidth="30" minWidth="30"/>
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40"/>
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40"/>
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40"/>
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40"/>
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40"/>
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40"/>
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40"/>
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40"/>
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40"/>
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40"/>
+                </columnConstraints>
+
+                <rowConstraints>
+                    <RowConstraints vgrow="NEVER" maxHeight="30" minHeight="30"/>
+                    <RowConstraints vgrow="NEVER" maxHeight="40" minHeight="40"/>
+                    <RowConstraints vgrow="NEVER" maxHeight="40" minHeight="40"/>
+                    <RowConstraints vgrow="NEVER" maxHeight="40" minHeight="40"/>
+                    <RowConstraints vgrow="NEVER" maxHeight="40" minHeight="40"/>
+                    <RowConstraints vgrow="NEVER" maxHeight="40" minHeight="40"/>
+                    <RowConstraints vgrow="NEVER" maxHeight="40" minHeight="40"/>
+                    <RowConstraints vgrow="NEVER" maxHeight="40" minHeight="40"/>
+                    <RowConstraints vgrow="NEVER" maxHeight="40" minHeight="40"/>
+                    <RowConstraints vgrow="NEVER" maxHeight="40" minHeight="40"/>
+                    <RowConstraints vgrow="NEVER" maxHeight="40" minHeight="40"/>
+                </rowConstraints>
+
+                <Pane GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+
+                <Label text="А" GridPane.rowIndex="0" GridPane.columnIndex="1"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="Б" GridPane.rowIndex="0" GridPane.columnIndex="2"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="В" GridPane.rowIndex="0" GridPane.columnIndex="3"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="Г" GridPane.rowIndex="0" GridPane.columnIndex="4"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="Д" GridPane.rowIndex="0" GridPane.columnIndex="5"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="Е" GridPane.rowIndex="0" GridPane.columnIndex="6"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="Ж" GridPane.rowIndex="0" GridPane.columnIndex="7"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="З" GridPane.rowIndex="0" GridPane.columnIndex="8"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="И" GridPane.rowIndex="0" GridPane.columnIndex="9"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="К" GridPane.rowIndex="0" GridPane.columnIndex="10"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+
+                <Label text="1" GridPane.rowIndex="1" GridPane.columnIndex="0"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="2" GridPane.rowIndex="2" GridPane.columnIndex="0"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="3" GridPane.rowIndex="3" GridPane.columnIndex="0"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="4" GridPane.rowIndex="4" GridPane.columnIndex="0"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="5" GridPane.rowIndex="5" GridPane.columnIndex="0"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="6" GridPane.rowIndex="6" GridPane.columnIndex="0"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="7" GridPane.rowIndex="7" GridPane.columnIndex="0"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="8" GridPane.rowIndex="8" GridPane.columnIndex="0"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="9" GridPane.rowIndex="9" GridPane.columnIndex="0"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+                <Label text="10" GridPane.rowIndex="10" GridPane.columnIndex="0"
+                       style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;"
+                       GridPane.halignment="CENTER" GridPane.valignment="CENTER"/>
+
+                <GridPane fx:id="playerGrid" GridPane.rowIndex="1" GridPane.columnIndex="1"
+                          GridPane.rowSpan="10" GridPane.columnSpan="10"
+                          hgap="0" vgap="0"/>
+            </GridPane>
+        </VBox>
+    </HBox>
+
+    <Label fx:id="statusLabel" style="-fx-text-fill: #f38ba8; -fx-font-size: 18px;" minHeight="40"/>
+
+    <Button fx:id="readyButton" text="ГОТОВ К БОЮ!" onAction="#onReady"
+            style="-fx-background-color: #a6e3a1; -fx-font-size: 28px; -fx-font-weight: bold;
+                   -fx-pref-width: 500; -fx-pref-height: 80;" disable="true"/>
+</VBox>

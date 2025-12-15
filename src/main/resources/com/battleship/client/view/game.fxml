@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.Rectangle?>
+
+<VBox fx:controller="com.battleship.client.controller.GameController"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      spacing="20" alignment="CENTER" style="-fx-background-color: #1e1e2e;">
+    <padding><Insets top="20" right="40" bottom="20" left="40"/></padding>
+
+    <HBox alignment="TOP_LEFT" style="-fx-padding: 10;">
+        <Button text="ESC — Пауза / Меню" onAction="#onPause"
+                style="-fx-background-color: #f38ba8; -fx-text-fill: white; -fx-font-weight: bold;
+                       -fx-font-size: 14px; -fx-padding: 8 16 8 16;"/>
+    </HBox>
+
+    <Label text="МОРСКОЙ БОЙ" style="-fx-font-size: 48px; -fx-text-fill: #89b4fa; -fx-font-weight: bold"/>
+
+    <HBox spacing="60" alignment="CENTER">
+        <HBox spacing="15" alignment="CENTER">
+            <Label text="Ваш ход" style="-fx-font-size: 20px; -fx-text-fill: #a6e3a1;"/>
+            <Rectangle fx:id="playerTurnIndicator" width="40" height="40" fill="#585b70"/>
+        </HBox>
+
+        <Separator orientation="VERTICAL" prefHeight="60" style="-fx-background-color: #585b70;"/>
+
+        <HBox spacing="15" alignment="CENTER">
+            <Rectangle fx:id="computerTurnIndicator" width="40" height="40" fill="#585b70"/>
+            <Label text="Ход противника" style="-fx-font-size: 20px; -fx-text-fill: #f38ba8;"/>
+        </HBox>
+    </HBox>
+
+    <HBox spacing="80" alignment="CENTER">
+        <!-- Мое поле -->
+        <VBox spacing="10">
+            <Label text="Твоё поле" style="-fx-font-size: 22px; -fx-text-fill: #cdd6f4;"/>
+            <GridPane fx:id="playerGrid" hgap="1" vgap="1" style="-fx-background-color: #313244;"
+                      prefWidth="400" prefHeight="400"/>
+        </VBox>
+
+        <!-- Поле противника -->
+        <VBox spacing="10">
+            <Label text="Поле противника" style="-fx-font-size: 22px; -fx-text-fill: #cdd6f4;"/>
+            <GridPane fx:id="computerGrid" hgap="1" vgap="1" style="-fx-background-color: #313244;"
+                      prefWidth="400" prefHeight="400"/>
+        </VBox>
+    </HBox>
+
+    <Label fx:id="statusLabel" text="Ваш ход!" style="-fx-font-size: 22px; -fx-text-fill: #a6e3a1;" minHeight="50"/>
+
+</VBox>

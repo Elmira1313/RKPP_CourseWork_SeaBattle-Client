@@ -13,8 +13,10 @@ public enum MessageType {
     PLACE_SHIPS,
     SHOT,
     SHOT_RESULT,
+    GAME_START,
     GAME_STATE,
     OPPONENT_SHOT,
     GAME_OVER,
+    LOBBY_ENTER,
     ERROR
 }
