@@ -80,14 +80,14 @@ public class LoginController {
         try {
             Message msg = (Message) in.readObject();
             Platform.runLater(() -> {
-                if (msg.getType() == MessageType.LOGIN_SUCCESS || msg.getType() == MessageType.REGISTER_SUCCESS) {
+                if (msg.getType() == MessageType.LOGIN_SUCCESS) {
                     String username = msg.getType() == MessageType.LOGIN_SUCCESS
                             ? (String) msg.getPayload()
                             : loginField.getText();
 
                     openLobby(username);
                 } else {
-                    statusLabel.setText("Ошибка: " + msg.getPayload());
+                    statusLabel.setText("Сообщение: " + msg.getPayload());
                 }
             });
         } catch (Exception e) {
@@ -99,6 +99,8 @@ public class LoginController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/battleship/client/view/lobby.fxml"));
             Stage stage = (Stage) statusLabel.getScene().getWindow();
+            stage.centerOnScreen();
+            stage.setTitle("Морской бой — Лобби");
             stage.setScene(new Scene(loader.load(), 600, 700));
 
             LobbyController lobby = loader.getController();

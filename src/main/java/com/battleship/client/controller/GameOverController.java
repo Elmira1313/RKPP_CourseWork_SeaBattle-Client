@@ -44,7 +44,6 @@ public class GameOverController {
             );
             loader.setController(this);
             Parent root = loader.load();
-
             if (playerWon) {
                 titleLabel.setText("ПОБЕДА!");
                 titleLabel.setStyle("-fx-text-fill: #a6e3a1;");
@@ -64,11 +63,24 @@ public class GameOverController {
             scene.setFill(null);
             stage.setScene(scene);
 
+            centerOnMainStage(root);
+
             stage.showAndWait();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    private void centerOnMainStage(Parent root) {
+        Stage mainStage = (Stage) gameController.getStatusLabel().getScene().getWindow();
+
+        stage.setOnShown(event -> {
+            double width = root.getBoundsInParent().getWidth();
+            double height = root.getBoundsInParent().getHeight();
+
+            stage.setX(mainStage.getX() + (mainStage.getWidth() - width) / 2);
+            stage.setY(mainStage.getY() + (mainStage.getHeight() - height) / 2);
+        });
     }
 
     @FXML

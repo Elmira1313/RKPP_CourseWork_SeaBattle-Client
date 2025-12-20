@@ -29,8 +29,8 @@ public class LobbyController {
         this.currentUser = username;
         this.out = out;
         this.in = in;
-        welcomeLabel.setText("Привет, " + username + "!");
-        statusLabel.setText("Готов к бою!");
+        welcomeLabel.setText("Привет, " + username);
+        statusLabel.setText("Готов к бою");
     }
 
     @FXML private void onNewGame() {

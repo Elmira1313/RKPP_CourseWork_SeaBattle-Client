@@ -3,14 +3,17 @@ package com.battleship.client.controller;
 import com.battleship.common.*;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-
+import javafx.stage.Stage;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -22,18 +25,29 @@ public class GameController implements Initializable {
     @FXML private GridPane playerGrid;
     @FXML private GridPane computerGrid;
     @FXML private Label statusLabel;
+    @FXML private Rectangle playerTurnIndicator;
+    @FXML private Rectangle computerTurnIndicator;
+
 
     private Game game;
     private ObjectOutputStream out;
     private ObjectInputStream in;
     private Thread listenerThread;
     private volatile boolean listening = true;
+    private GameOverController gameOverController;
+
+    private final boolean[][] playerShots = new boolean[10][10];
+    private boolean canShoot = true;
 
     private static final Color WATER = Color.web("#1e1e2e");
     private static final Color SHIP = Color.web("#89b4fa");
     private static final Color HIT = Color.web("#f38ba8");
     private static final Color MISS = Color.web("#585b70");
     private static final Color LINE = Color.web("#585b70");
+
+    public Label getStatusLabel() {
+        return statusLabel;
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -44,8 +58,21 @@ public class GameController implements Initializable {
         this.game = game;
         this.out = out;
         this.in = in;
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                playerShots[i][j] = false;
+            }
+        }
+        canShoot = true;
         renderFields();
         startListening();
+
+        setTurnIndicator(true);
+        statusLabel.getScene().setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.ESCAPE) {
+                onPause();
+            }
+        });
     }
 
     private void renderFields() {
@@ -76,11 +103,16 @@ public class GameController implements Initializable {
     }
 
     private void shoot(int row, int col) {
+        if (!canShoot) return;
+        if (playerShots[row][col]) return;
+
         try {
+            canShoot = false;
             out.writeObject(new Message(MessageType.SHOT, new int[]{row, col}));
             statusLabel.setText("Выстрел отправлен...");
         } catch (IOException e) {
             statusLabel.setText("Ошибка!");
+            canShoot = true;
         }
     }
 
@@ -114,32 +146,137 @@ public class GameController implements Initializable {
                 int[] res = (int[]) msg.getPayload();
                 int row = res[0], col = res[1];
                 boolean hit = res[2] == 1;
+
+                playerShots[row][col] = true;
                 updateCell(computerGrid, row, col, hit);
-                statusLabel.setText(hit ? "Попадание!" : "Промах. Ход противника.");
+
+                if (hit) {
+                    statusLabel.setText("Попадание! Ваш ход продолжается.");
+                    setTurnIndicator(true);
+                    canShoot = true;
+                } else {
+                    statusLabel.setText("Промах. Ход противника.");
+                    setTurnIndicator(false);
+                    canShoot = false;
+                }
             }
             case OPPONENT_SHOT -> {
                 int[] res = (int[]) msg.getPayload();
                 int row = res[0], col = res[1];
                 boolean hit = res[2] == 1;
+
                 updateCell(playerGrid, row, col, hit);
-                statusLabel.setText(hit ? "Противник попал!" : "Противник промахнулся!");
 
                 if (hit) {
-                    for (Ship ship : game.playerShips) {
-                        for (int[] cell : ship.cells) {
-                            if (cell[0] == row && cell[1] == col) {
-                                ship.hits++;
-                                break;
-                            }
-                        }
-                    }
+                    statusLabel.setText("Противник попал! Его ход продолжается.");
+                    setTurnIndicator(false);
+                    canShoot = false;
+                } else {
+                    statusLabel.setText("Противник промахнулся! Ваш ход.");
+                    setTurnIndicator(true);
+                    canShoot = true;
                 }
             }
             case GAME_OVER -> {
                 boolean win = (boolean) msg.getPayload();
                 statusLabel.setText(win ? "ПОБЕДА!" : "ПОРАЖЕНИЕ!");
+                setTurnIndicator(false);
                 stopListening();
+                canShoot = false;
+                showGameOverDialog(win);
             }
+        }
+    }
+
+    private void setTurnIndicator(boolean playerTurn) {
+        if (playerTurn) {
+            playerTurnIndicator.setFill(Color.web("#a6e3a1"));
+            computerTurnIndicator.setFill(Color.web("#585b70"));
+        } else {
+            playerTurnIndicator.setFill(Color.web("#585b70"));
+            computerTurnIndicator.setFill(Color.web("#f38ba8"));
+        }
+    }
+
+    private void showGameOverDialog(boolean playerWon) {
+        Platform.runLater(() -> {
+            gameOverController = new GameOverController();
+            gameOverController.show(
+                    playerWon,
+                    this,
+                    out,
+                    in,
+                    this::restartGame,
+                    this::exitToMenu
+            );
+        });
+    }
+
+    private void restartGame() {
+        try {
+            stopListening();
+
+            Stage currentStage = (Stage) statusLabel.getScene().getWindow();
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/battleship/client/view/placement.fxml")
+            );
+            Stage stage = new Stage();
+            stage.setScene(new Scene(loader.load(), 1200, 800));
+            stage.centerOnScreen();
+            stage.setTitle("Морской бой — расстановка");
+
+            Game newGame = new Game(game.playerName);
+
+            PlacementController controller = loader.getController();
+            controller.initGame(newGame, out, in);
+
+            currentStage.close();
+            stage.show();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            statusLabel.setText("Ошибка при перезапуске игры");
+        }
+    }
+
+    @FXML
+    private void onPause() {
+        PauseDialogController dialog = new PauseDialogController();
+        dialog.show(
+                this,
+                () -> {},
+                this::restartGame,
+                this::exitToMenu
+        );
+    }
+
+    private void exitToMenu() {
+        try {
+            stopListening();
+            out.reset();
+            out.flush();
+
+            out.writeObject(new Message(MessageType.LOBBY_ENTER));
+            out.flush();
+
+            Stage currentStage = (Stage) statusLabel.getScene().getWindow();
+
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/battleship/client/view/lobby.fxml")
+            );
+            Scene scene = new Scene(loader.load(), 600, 700);
+            currentStage.setScene(scene);
+            currentStage.centerOnScreen();
+            currentStage.setTitle("Морской бой — Лобби");
+
+            LobbyController controller = loader.getController();
+            controller.initData(game.playerName, out, in);
+            controller.startListening();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            statusLabel.setText("Ошибка при переходе в меню");
         }
     }
 
@@ -147,6 +284,7 @@ public class GameController implements Initializable {
         Rectangle rect = getCellRect(grid, row, col);
         if (rect != null) {
             rect.setFill(hit ? HIT : MISS);
+            rect.setDisable(true);
         }
     }
 

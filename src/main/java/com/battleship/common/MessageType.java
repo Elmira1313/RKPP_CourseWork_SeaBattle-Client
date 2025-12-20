@@ -17,5 +17,6 @@ public enum MessageType {
     GAME_STATE,
     OPPONENT_SHOT,
     GAME_OVER,
+    LOBBY_ENTER,
     ERROR
 }

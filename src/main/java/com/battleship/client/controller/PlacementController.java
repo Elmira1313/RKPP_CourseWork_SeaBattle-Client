@@ -11,10 +11,13 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -30,6 +33,7 @@ public class PlacementController implements Initializable {
     @FXML private GridPane playerGrid;
     @FXML private Button readyButton;
     @FXML private Label statusLabel;
+    @FXML private ComboBox<String> difficultyCombo;
 
     @FXML private Rectangle ship4Sample, ship3Sample, ship2Sample, ship1Sample;
     @FXML private Label count4Label, count3Label, count2Label, count1Label;
@@ -56,7 +60,7 @@ public class PlacementController implements Initializable {
     private static final Color OK = Color.web("#a6e3a1");
     private static final Color BAD = Color.web("#f38ba8");
     private static final Color LINE = Color.web("#585b70");
-    private static final Color UNAVAILABLE = Color.web("#585b70");
+    private static final Color UNAVAILABLE = Color.web("#585b70"); // Серый для недоступных
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -64,6 +68,7 @@ public class PlacementController implements Initializable {
         initShipCounts();
         statusLabel.setText("Выберите корабль.");
         statusLabel.setStyle("-fx-text-fill: #cdd6f4; -fx-font-size: 16px;");
+        difficultyCombo.setValue("Средний");
     }
 
     public void initGame(Game game, ObjectOutputStream out, ObjectInputStream in) {
@@ -82,11 +87,29 @@ public class PlacementController implements Initializable {
 
     private void buildGrid() {
         playerGrid.getChildren().clear();
+
+        playerGrid.getColumnConstraints().clear();
+        playerGrid.getRowConstraints().clear();
+
+        for (int i = 0; i < 10; i++) {
+            ColumnConstraints colConst = new ColumnConstraints();
+            colConst.setPrefWidth(40);
+            colConst.setMinWidth(40);
+            colConst.setMaxWidth(40);
+            playerGrid.getColumnConstraints().add(colConst);
+
+            RowConstraints rowConst = new RowConstraints();
+            rowConst.setPrefHeight(40);
+            rowConst.setMinHeight(40);
+            rowConst.setMaxHeight(40);
+            playerGrid.getRowConstraints().add(rowConst);
+        }
+
         for (int row = 0; row < 10; row++) {
             for (int col = 0; col < 10; col++) {
                 StackPane cell = new StackPane();
                 cell.setAlignment(Pos.CENTER);
-                Rectangle rect = new Rectangle(40, 40);
+                Rectangle rect = new Rectangle(38, 38);
                 rect.setFill(WATER);
                 rect.setStroke(LINE);
                 rect.setStrokeWidth(1);
@@ -430,6 +453,10 @@ public class PlacementController implements Initializable {
     @FXML
     private void onReady() {
         try {
+            String difficulty = difficultyCombo.getValue();
+            if (difficulty == null) difficulty = "Средний";
+            game.difficulty = difficulty;
+
             out.writeObject(new Message(MessageType.PLACE_SHIPS, game));
             out.flush();
             statusLabel.setText("Ожидаем начала боя...");
@@ -445,7 +472,7 @@ public class PlacementController implements Initializable {
 
         } catch (Exception e) {
             e.printStackTrace();
-            statusLabel.setText("Ошибка перехода в бой!");
+            statusLabel.setText("Ошибка перехода в бой");
         }
     }
 }
