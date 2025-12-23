@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:controller="com.battleship.client.controller.GameController"
+      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      spacing="20" alignment="CENTER" style="-fx-background-color: #1e1e2e;">
+    <padding><Insets top="20" right="40" bottom="20" left="40"/></padding>
+
+
+        <!-- Мое поле -->
+        <VBox spacing="10">
+            <GridPane fx:id="playerGrid" hgap="1" vgap="1" style="-fx-background-color: #313244;"
+                      prefWidth="400" prefHeight="400"/>
+        </VBox>
+
+        <!-- Поле противника -->
+        <VBox spacing="10">
+            <GridPane fx:id="computerGrid" hgap="1" vgap="1" style="-fx-background-color: #313244;"
+                      prefWidth="400" prefHeight="400"/>
+        </VBox>
+    </HBox>
+
+</VBox>
