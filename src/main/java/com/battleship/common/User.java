@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class User implements Serializable {
     private final String login;
-    private final String passwordHash;
+    private final String passwordHash;  // уже захешированный
     private final String salt;
 
     public User(String login, String passwordHash, String salt) {
@@ -13,6 +13,7 @@ public class User implements Serializable {
         this.salt = salt;
     }
 
+    // геттеры
     public String getLogin() { return login; }
     public String getPasswordHash() { return passwordHash; }
     public String getSalt() { return salt; }

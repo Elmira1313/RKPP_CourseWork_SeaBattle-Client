@@ -44,6 +44,7 @@ public class GameOverController {
             );
             loader.setController(this);
             Parent root = loader.load();
+
             if (playerWon) {
                 titleLabel.setText("ПОБЕДА!");
                 titleLabel.setStyle("-fx-text-fill: #a6e3a1;");

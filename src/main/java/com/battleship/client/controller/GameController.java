@@ -14,11 +14,16 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 public class GameController implements Initializable {
 
@@ -32,16 +37,20 @@ public class GameController implements Initializable {
     private Game game;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+    private Socket socket;
     private Thread listenerThread;
     private volatile boolean listening = true;
     private GameOverController gameOverController;
 
     private final boolean[][] playerShots = new boolean[10][10];
+    private final Set<String> playerSunkCells = new HashSet<>();
+    private final Set<String> computerSunkCells = new HashSet<>();
     private boolean canShoot = true;
 
     private static final Color WATER = Color.web("#1e1e2e");
     private static final Color SHIP = Color.web("#89b4fa");
-    private static final Color HIT = Color.web("#f38ba8");
+    private static final Color HIT = Color.web("#f9e2af");
+    private static final Color SUNK = Color.web("#f38ba8");
     private static final Color MISS = Color.web("#585b70");
     private static final Color LINE = Color.web("#585b70");
 
@@ -54,15 +63,18 @@ public class GameController implements Initializable {
         statusLabel.setText("Ваш ход!");
     }
 
-    public void initGame(Game game, ObjectOutputStream out, ObjectInputStream in) {
+    public void initGame(Game game, ObjectOutputStream out, ObjectInputStream in, Socket socket) {
         this.game = game;
         this.out = out;
         this.in = in;
+        this.socket = socket;
         for (int i = 0; i < 10; i++) {
             for (int j = 0; j < 10; j++) {
                 playerShots[i][j] = false;
             }
         }
+        playerSunkCells.clear();
+        computerSunkCells.clear();
         canShoot = true;
         renderFields();
         startListening();
@@ -185,6 +197,22 @@ public class GameController implements Initializable {
                 canShoot = false;
                 showGameOverDialog(win);
             }
+            case SHIP_SUNK -> {
+                Object[] data = (Object[]) msg.getPayload();
+                @SuppressWarnings("unchecked")
+                List<int[]> cellsList = (List<int[]>) data[0];
+                boolean isPlayerField = (boolean) data[1];
+
+                GridPane targetGrid = isPlayerField ? playerGrid : computerGrid;
+                Set<String> targetSunkCells = isPlayerField ? playerSunkCells : computerSunkCells;
+
+                for (int[] cell : cellsList) {
+                    int row = cell[0];
+                    int col = cell[1];
+                    targetSunkCells.add(row + "," + col);
+                    updateCell(targetGrid, row, col, true);
+                }
+            }
         }
     }
 
@@ -229,7 +257,7 @@ public class GameController implements Initializable {
             Game newGame = new Game(game.playerName);
 
             PlacementController controller = loader.getController();
-            controller.initGame(newGame, out, in);
+            controller.initGame(game, out, in, socket);
 
             currentStage.close();
             stage.show();
@@ -242,7 +270,7 @@ public class GameController implements Initializable {
 
     @FXML
     private void onPause() {
-        PauseDialogController dialog = new PauseDialogController();
+        MenuDialogController dialog = new MenuDialogController();
         dialog.show(
                 this,
                 () -> {},
@@ -254,36 +282,38 @@ public class GameController implements Initializable {
     private void exitToMenu() {
         try {
             stopListening();
-            out.reset();
-            out.flush();
-
-            out.writeObject(new Message(MessageType.LOBBY_ENTER));
-            out.flush();
 
             Stage currentStage = (Stage) statusLabel.getScene().getWindow();
 
-            FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/battleship/client/view/lobby.fxml")
-            );
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/battleship/client/view/lobby.fxml"));
             Scene scene = new Scene(loader.load(), 600, 700);
             currentStage.setScene(scene);
             currentStage.centerOnScreen();
             currentStage.setTitle("Морской бой — Лобби");
 
             LobbyController controller = loader.getController();
-            controller.initData(game.playerName, out, in);
-            controller.startListening();
+            controller.reconnectAfterGame();
+
+            listening = true;
+            controller.initData(game.playerName, out, in, socket);
 
         } catch (Exception e) {
             e.printStackTrace();
-            statusLabel.setText("Ошибка при переходе в меню");
         }
     }
 
     private void updateCell(GridPane grid, int row, int col, boolean hit) {
         Rectangle rect = getCellRect(grid, row, col);
         if (rect != null) {
-            rect.setFill(hit ? HIT : MISS);
+            String key = row + "," + col;
+            if ((grid == playerGrid && playerSunkCells.contains(key)) ||
+                    (grid == computerGrid && computerSunkCells.contains(key))) {
+                rect.setFill(SUNK);
+            } else if (hit) {
+                rect.setFill(HIT);
+            } else {
+                rect.setFill(MISS);
+            }
             rect.setDisable(true);
         }
     }

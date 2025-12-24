@@ -25,6 +25,7 @@ import javafx.stage.Stage;
 
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.Socket;
 import java.net.URL;
 import java.util.*;
 
@@ -41,6 +42,7 @@ public class PlacementController implements Initializable {
     private Game game;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+    private Socket socket;
 
     private Rectangle selectedShip = null;
     private int selectedSize = 0;
@@ -60,7 +62,7 @@ public class PlacementController implements Initializable {
     private static final Color OK = Color.web("#a6e3a1");
     private static final Color BAD = Color.web("#f38ba8");
     private static final Color LINE = Color.web("#585b70");
-    private static final Color UNAVAILABLE = Color.web("#585b70"); // Серый для недоступных
+    private static final Color UNAVAILABLE = Color.web("#585b70");
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -71,10 +73,11 @@ public class PlacementController implements Initializable {
         difficultyCombo.setValue("Средний");
     }
 
-    public void initGame(Game game, ObjectOutputStream out, ObjectInputStream in) {
+    public void initGame(Game game, ObjectOutputStream out, ObjectInputStream in, Socket socket) {
         this.game = game;
         this.out = out;
         this.in = in;
+        this.socket = socket;
         readyButton.setDisable(true);
 
         updateShipVisuals();
@@ -468,11 +471,11 @@ public class PlacementController implements Initializable {
             stage.setTitle("Морской бой — Битва");
 
             GameController controller = loader.getController();
-            controller.initGame(game, out, in);
+            controller.initGame(game, out, in, socket);
 
         } catch (Exception e) {
             e.printStackTrace();
-            statusLabel.setText("Ошибка перехода в бой");
+            statusLabel.setText("Ошибка перехода в бой!");
         }
     }
 }

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox fx:id="root" alignment="CENTER" spacing="30"
+      style="-fx-background-color: #1e1e2e; -fx-border-color: #585b70; -fx-border-width: 3; -fx-border-radius: 15; -fx-background-radius: 15;"
+      xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets top="40" right="60" bottom="40" left="60"/>
+    </padding>
+
+    <Label text="Меню" textFill="#f9e2af" style="-fx-font-weight: bold;">
+        <font>
+            <Font size="48"/>
+        </font>
+    </Label>
+
+    <Label text="Игра приостановлена" textFill="#cdd6f4">
+        <font>
+            <Font size="20"/>
+        </font>
+    </Label>
+
+    <VBox spacing="15">
+        <Button text="Продолжить игру" onAction="#onResume"
+                style="-fx-background-color: #a6e3a1; -fx-text-fill: #1e1e2e; -fx-font-weight: bold;
+                       -fx-font-size: 18px; -fx-pref-width: 300; -fx-pref-height: 60;"/>
+        <Button text="Новая игра" onAction="#onRestart"
+                style="-fx-background-color: #89b4fa; -fx-text-fill: #1e1e2e; -fx-font-weight: bold;
+                       -fx-font-size: 18px; -fx-pref-width: 300; -fx-pref-height: 60;"/>
+        <Button text="Выйти в меню" onAction="#onExitToMenu"
+                style="-fx-background-color: #f38ba8; -fx-text-fill: white; -fx-font-weight: bold;
+                       -fx-font-size: 18px; -fx-pref-width: 300; -fx-pref-height: 60;"/>
+    </VBox>
+</VBox>
