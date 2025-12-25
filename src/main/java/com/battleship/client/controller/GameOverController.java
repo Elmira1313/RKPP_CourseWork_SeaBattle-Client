@@ -1,5 +1,6 @@
 package com.battleship.client.controller;
 
+import com.battleship.client.NetworkManager;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,8 +12,6 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 
 public class GameOverController {
 
@@ -21,20 +20,16 @@ public class GameOverController {
     @FXML private Button restartButton;
     @FXML private Button exitButton;
 
-    private Stage stage;
-    private GameController gameController;
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
+    private Stage dialogStage;
     private Runnable onRestartCallback;
     private Runnable onExitCallback;
 
-    public void show(boolean playerWon, GameController gameController,
-                     ObjectOutputStream out, ObjectInputStream in,
-                     Runnable onRestart, Runnable onExit) {
+    public void show(boolean playerWon,
+                     GameController gameController,
+                     NetworkManager networkManager,
+                     Runnable onRestart,
+                     Runnable onExit) {
 
-        this.gameController = gameController;
-        this.out = out;
-        this.in = in;
         this.onRestartCallback = onRestart;
         this.onExitCallback = onExit;
 
@@ -44,6 +39,8 @@ public class GameOverController {
             );
             loader.setController(this);
             Parent root = loader.load();
+
+            Stage parentStage = (Stage) gameController.getStatusLabel().getScene().getWindow();
 
             if (playerWon) {
                 titleLabel.setText("ПОБЕДА!");
@@ -55,54 +52,48 @@ public class GameOverController {
                 messageLabel.setText("Все ваши корабли потоплены...");
             }
 
-            stage = new Stage();
-            stage.initModality(Modality.APPLICATION_MODAL);
-            stage.initStyle(StageStyle.TRANSPARENT);
-            stage.setTitle("Игра окончена");
+            dialogStage = new Stage();
+            dialogStage.initOwner(parentStage);
+            dialogStage.initModality(Modality.APPLICATION_MODAL);
+            dialogStage.initStyle(StageStyle.TRANSPARENT);
+            dialogStage.setTitle("Игра окончена");
 
             Scene scene = new Scene(root);
             scene.setFill(null);
-            stage.setScene(scene);
+            dialogStage.setScene(scene);
 
-            centerOnMainStage(root);
-
-            stage.showAndWait();
+            dialogStage.setOnShown(e -> centerOnParent(parentStage, root));
+            dialogStage.showAndWait();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    private void centerOnMainStage(Parent root) {
-        Stage mainStage = (Stage) gameController.getStatusLabel().getScene().getWindow();
 
-        stage.setOnShown(event -> {
-            double width = root.getBoundsInParent().getWidth();
-            double height = root.getBoundsInParent().getHeight();
-
-            stage.setX(mainStage.getX() + (mainStage.getWidth() - width) / 2);
-            stage.setY(mainStage.getY() + (mainStage.getHeight() - height) / 2);
-        });
+    private void centerOnParent(Stage parentStage, Parent root) {
+        double width = root.getBoundsInParent().getWidth();
+        double height = root.getBoundsInParent().getHeight();
+        dialogStage.setX(parentStage.getX() + (parentStage.getWidth() - width) / 2);
+        dialogStage.setY(parentStage.getY() + (parentStage.getHeight() - height) / 2);
     }
 
     @FXML
     private void onRestart() {
-        if (onRestartCallback != null) {
-            onRestartCallback.run();
-        }
+        if (onRestartCallback != null) onRestartCallback.run();
         close();
     }
 
     @FXML
     private void onExitToMenu() {
-        if (onExitCallback != null) {
-            onExitCallback.run();
-        }
+        if (onExitCallback != null) onExitCallback.run();
         close();
     }
 
     private void close() {
-        if (stage != null) {
-            stage.close();
-        }
+        if (dialogStage != null) dialogStage.close();
+    }
+
+    public Label getStatusLabel() {
+        return null;
     }
 }

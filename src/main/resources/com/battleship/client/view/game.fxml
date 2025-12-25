@@ -1,52 +1,202 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?import javafx.geometry.Insets?>
+
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.shape.*?>
 
-<VBox fx:controller="com.battleship.client.controller.GameController"
-      xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
-      spacing="20" alignment="CENTER" style="-fx-background-color: #1e1e2e;">
-    <padding><Insets top="20" right="40" bottom="20" left="40"/></padding>
+<VBox alignment="CENTER" spacing="20" style="-fx-background-color: #1e1e2e;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.battleship.client.controller.GameController">
+    <padding><Insets bottom="20" left="40" right="40" top="20" /></padding>
 
     <HBox alignment="TOP_LEFT" style="-fx-padding: 10;">
-        <Button text="ESC — Пауза / Меню" onAction="#onPause"
-                style="-fx-background-color: #f38ba8; -fx-text-fill: white; -fx-font-weight: bold;
-                       -fx-font-size: 14px; -fx-padding: 8 16 8 16;"/>
+        <Button onAction="#onPause" style="-fx-background-color: #f38ba8; -fx-text-fill: white; -fx-font-weight: bold;-fx-font-size: 14px; -fx-padding: 8 16 8 16;" text="ESC — Пауза / Меню" />
     </HBox>
 
-    <Label text="МОРСКОЙ БОЙ" style="-fx-font-size: 48px; -fx-text-fill: #89b4fa; -fx-font-weight: bold"/>
+    <Label style="-fx-font-size: 48px; -fx-text-fill: #89b4fa; -fx-font-weight: bold" text="МОРСКОЙ БОЙ" />
 
-    <HBox spacing="60" alignment="CENTER">
-        <HBox spacing="15" alignment="CENTER">
-            <Label text="Ваш ход" style="-fx-font-size: 20px; -fx-text-fill: #a6e3a1;"/>
-            <Rectangle fx:id="playerTurnIndicator" width="40" height="40" fill="#585b70"/>
-        </HBox>
+    <HBox alignment="CENTER" spacing="60">
 
-        <Separator orientation="VERTICAL" prefHeight="60" style="-fx-background-color: #585b70;"/>
-
-        <HBox spacing="15" alignment="CENTER">
-            <Rectangle fx:id="computerTurnIndicator" width="40" height="40" fill="#585b70"/>
-            <Label text="Ход противника" style="-fx-font-size: 20px; -fx-text-fill: #f38ba8;"/>
-        </HBox>
-    </HBox>
-
-    <HBox spacing="80" alignment="CENTER">
-        <!-- Мое поле -->
-        <VBox spacing="10">
-            <Label text="Ваше поле" style="-fx-font-size: 22px; -fx-text-fill: #cdd6f4;"/>
-            <GridPane fx:id="playerGrid" hgap="1" vgap="1" style="-fx-background-color: #313244;"
-                      prefWidth="400" prefHeight="400"/>
+        <VBox alignment="CENTER" spacing="8">
+            <Label style="-fx-font-size: 20px; -fx-text-fill: #a6e3a1;" text="Ваш ход" />
+            <Rectangle fx:id="playerTurnIndicator" arcHeight="8" arcWidth="8" height="32" width="32" />
+         <HBox.margin>
+            <Insets left="78.0" />
+         </HBox.margin>
         </VBox>
 
-        <!-- Поле противника -->
-        <VBox spacing="10">
-            <Label text="Поле противника" style="-fx-font-size: 22px; -fx-text-fill: #cdd6f4;"/>
-            <GridPane fx:id="computerGrid" hgap="1" vgap="1" style="-fx-background-color: #313244;"
-                      prefWidth="400" prefHeight="400"/>
+        <Separator orientation="VERTICAL" prefHeight="60" />
+
+        <VBox alignment="CENTER" spacing="8">
+            <Label style="-fx-font-size: 20px; -fx-text-fill: #f38ba8;" text="Ход противника" />
+            <Rectangle fx:id="computerTurnIndicator" arcHeight="8" arcWidth="8" height="32" width="32" />
+        </VBox>
+
+    </HBox>
+
+
+    <HBox alignment="CENTER" spacing="20">
+        <VBox alignment="TOP_CENTER" maxWidth="220" minWidth="220" prefWidth="220" spacing="12" style="-fx-background-color: #313244; -fx-background-radius: 15; -fx-padding: 15;">
+            <Label style="-fx-font-size: 20px; -fx-text-fill: #cdd6f4; -fx-font-weight: bold" text="Вы" textAlignment="CENTER" />
+            <VBox spacing="10">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Rectangle fx:id="playerShip4" fill="#89b4fa" height="20" stroke="#585b70" strokeWidth="2" width="80" />
+                    <Label fx:id="playerCount4" style="-fx-font-size: 18px; -fx-text-fill: #cdd6f4;" text="×1" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Rectangle fx:id="playerShip3" fill="#89b4fa" height="20" stroke="#585b70" strokeWidth="2" width="60" />
+                    <Label fx:id="playerCount3" style="-fx-font-size: 18px; -fx-text-fill: #cdd6f4;" text="×2" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Rectangle fx:id="playerShip2" fill="#89b4fa" height="20" stroke="#585b70" strokeWidth="2" width="40" />
+                    <Label fx:id="playerCount2" style="-fx-font-size: 18px; -fx-text-fill: #cdd6f4;" text="×3" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Rectangle fx:id="playerShip1" fill="#89b4fa" height="20" stroke="#585b70" strokeWidth="2" width="20" />
+                    <Label fx:id="playerCount1" style="-fx-font-size: 18px; -fx-text-fill: #cdd6f4;" text="×4" />
+                </HBox>
+            </VBox>
+        </VBox>
+
+        <VBox alignment="TOP_CENTER" prefWidth="430" spacing="15">
+            <Label alignment="CENTER" style="-fx-font-size: 22px; -fx-text-fill: #cdd6f4;" text="Ваше поле" />
+            <GridPane fx:id="playerWrapper" alignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="NEVER" maxWidth="30" minWidth="30" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                </columnConstraints>
+
+                <rowConstraints>
+                    <RowConstraints maxHeight="30" minHeight="30" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                </rowConstraints>
+
+                <Pane GridPane.columnIndex="0" GridPane.rowIndex="0" />
+
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="А" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="Б" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="В" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="Г" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="Д" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="Е" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="Ж" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="З" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="И" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="К" GridPane.columnIndex="10" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="1" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="2" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="3" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="4" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="5" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="6" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="7" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="8" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="9" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="10" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="10" GridPane.valignment="CENTER" />
+
+                <GridPane fx:id="playerGrid" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="1" GridPane.rowSpan="10" />
+            </GridPane>
+        </VBox>
+
+        <VBox alignment="TOP_CENTER" prefWidth="430" spacing="15">
+            <Label alignment="CENTER" style="-fx-font-size: 22px; -fx-text-fill: #cdd6f4;" text="Поле противника" />
+            <GridPane fx:id="computerWrapper" alignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="NEVER" maxWidth="30" minWidth="30" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                    <ColumnConstraints hgrow="NEVER" maxWidth="40" minWidth="40" />
+                </columnConstraints>
+
+                <rowConstraints>
+                    <RowConstraints maxHeight="30" minHeight="30" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                    <RowConstraints maxHeight="40" minHeight="40" vgrow="NEVER" />
+                </rowConstraints>
+
+                <Pane GridPane.columnIndex="0" GridPane.rowIndex="0" />
+
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="А" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="Б" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="В" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="Г" GridPane.columnIndex="4" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="Д" GridPane.columnIndex="5" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="Е" GridPane.columnIndex="6" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="Ж" GridPane.columnIndex="7" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="З" GridPane.columnIndex="8" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="И" GridPane.columnIndex="9" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="К" GridPane.columnIndex="10" GridPane.halignment="CENTER" GridPane.rowIndex="0" GridPane.valignment="CENTER" />
+
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="1" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="2" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="2" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="3" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="3" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="4" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="4" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="5" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="6" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="7" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="7" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="8" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="8" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="9" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="9" GridPane.valignment="CENTER" />
+                <Label style="-fx-text-fill: #cdd6f4; -fx-font-size: 16px;" text="10" GridPane.columnIndex="0" GridPane.halignment="CENTER" GridPane.rowIndex="10" GridPane.valignment="CENTER" />
+
+                <GridPane fx:id="computerGrid" GridPane.columnIndex="1" GridPane.columnSpan="10" GridPane.rowIndex="1" GridPane.rowSpan="10" />
+            </GridPane>
+        </VBox>
+        <VBox alignment="TOP_CENTER" maxWidth="220" minWidth="220" prefWidth="220" spacing="12" style="-fx-background-color: #313244; -fx-background-radius: 15; -fx-padding: 15;">
+            <Label style="-fx-font-size: 20px; -fx-text-fill: #cdd6f4; -fx-font-weight: bold" text="Противник" textAlignment="CENTER" />
+            <VBox spacing="10">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Rectangle fx:id="computerShip4" fill="#89b4fa" height="20" stroke="#585b70" strokeWidth="2" width="80" />
+                    <Label fx:id="computerCount4" style="-fx-font-size: 18px; -fx-text-fill: #cdd6f4;" text="×1" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Rectangle fx:id="computerShip3" fill="#89b4fa" height="20" stroke="#585b70" strokeWidth="2" width="60" />
+                    <Label fx:id="computerCount3" style="-fx-font-size: 18px; -fx-text-fill: #cdd6f4;" text="×2" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Rectangle fx:id="computerShip2" fill="#89b4fa" height="20" stroke="#585b70" strokeWidth="2" width="40" />
+                    <Label fx:id="computerCount2" style="-fx-font-size: 18px; -fx-text-fill: #cdd6f4;" text="×3" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Rectangle fx:id="computerShip1" fill="#89b4fa" height="20" stroke="#585b70" strokeWidth="2" width="20" />
+                    <Label fx:id="computerCount1" style="-fx-font-size: 18px; -fx-text-fill: #cdd6f4;" text="×4" />
+                </HBox>
+            </VBox>
         </VBox>
     </HBox>
 
-    <Label fx:id="statusLabel" text="Ваш ход!" style="-fx-font-size: 22px; -fx-text-fill: #a6e3a1;" minHeight="50"/>
+    <Label fx:id="statusLabel" minHeight="50" style="-fx-font-size: 22px; -fx-text-fill: #a6e3a1;" text="Ваш ход!" />
 
 </VBox>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox fx:id="root" alignment="CENTER" spacing="30" style="-fx-background-color: #1e1e2e;-fx-border-color: #585b70;-fx-border-width: 3;-fx-border-radius: 15;-fx-background-radius: 15;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+    <padding>
+        <Insets bottom="40" left="60" right="60" top="40" />
+    </padding>
+
+    <Label style="-fx-font-weight: bold;" text="Сохранить игру?" textFill="#f9e2af">
+        <font>
+            <Font size="40" />
+        </font>
+    </Label>
+
+    <Label text="Вы хотите сохранить текущий прогресс?" textFill="#cdd6f4">
+        <font>
+            <Font size="18" />
+        </font>
+    </Label>
+
+    <VBox alignment="CENTER" spacing="15">
+        <Button onAction="#onYes" style="-fx-background-color: #a6e3a1; -fx-text-fill: #1e1e2e; -fx-font-weight: bold;-fx-font-size: 18px; -fx-pref-width: 300; -fx-pref-height: 60;" text="Да, сохранить" />
+        <Button onAction="#onNo" style="-fx-background-color: #f38ba8; -fx-text-fill: white; -fx-font-weight: bold;-fx-font-size: 18px; -fx-pref-width: 300; -fx-pref-height: 60;" text="Нет, не сохранять" />
+    </VBox>
+</VBox>

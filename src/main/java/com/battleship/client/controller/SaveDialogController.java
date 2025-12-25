@@ -1,10 +1,11 @@
 package com.battleship.client.controller;
 
+import com.battleship.client.NetworkManager;
+import com.battleship.common.MessageType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -12,26 +13,22 @@ import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
-public class MenuDialogController {
+public class SaveDialogController {
 
     @FXML private VBox root;
     private Stage dialogStage;
-    private Runnable onResume, onRestart, onExitToMenu;
-    private GameController gameController;
+    private Runnable onYes;
+    private Runnable onNo;
 
     public void show(GameController gameController,
-                     Runnable onResume,
-                     Runnable onRestart,
-                     Runnable onExitToMenu) {
-
-        this.gameController = gameController;
-        this.onResume = onResume;
-        this.onRestart = onRestart;
-        this.onExitToMenu = onExitToMenu;
+                     Runnable onYesCallback,
+                     Runnable onNoCallback) {
+        this.onYes = onYesCallback;
+        this.onNo = onNoCallback;
 
         try {
             FXMLLoader loader = new FXMLLoader(
-                    getClass().getResource("/com/battleship/client/view/menu_dialog.fxml")
+                    getClass().getResource("/com/battleship/client/view/save_dialog.fxml")
             );
             loader.setController(this);
             Parent root = loader.load();
@@ -42,17 +39,11 @@ public class MenuDialogController {
             dialogStage.initOwner(parentStage);
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.initStyle(StageStyle.TRANSPARENT);
-            dialogStage.setTitle("Пауза");
+            dialogStage.setTitle("Сохранение");
 
             Scene scene = new Scene(root);
             scene.setFill(null);
             dialogStage.setScene(scene);
-
-            scene.setOnKeyPressed(e -> {
-                if (e.getCode() == KeyCode.ESCAPE) {
-                    onResume();
-                }
-            });
 
             dialogStage.setOnShown(e -> centerOnParent(parentStage, root));
             dialogStage.showAndWait();
@@ -70,37 +61,21 @@ public class MenuDialogController {
     }
 
     @FXML
-    private void onResume() {
-        if (onResume != null) onResume.run();
+    private void onYes() {
+        NetworkManager.getInstance().send(MessageType.SAVE_GAME, null);
+        if (onYes != null) onYes.run();
         close();
     }
 
     @FXML
-    private void onRestart() {
-        showSaveDialog(() -> performRestart(), () -> performRestart());
-    }
-
-    @FXML
-    private void onExitToMenu() {
-        showSaveDialog(() -> performExitToMenu(), () -> performExitToMenu());
-    }
-
-    private void showSaveDialog(Runnable onYes, Runnable onNo) {
-        SaveDialogController saveDialog = new SaveDialogController();
-        saveDialog.show(gameController, onYes, onNo);
-    }
-
-    private void performRestart() {
+    private void onNo() {
+        if (onNo != null) onNo.run();
         close();
-        if (onRestart != null) onRestart.run();
-    }
-
-    private void performExitToMenu() {
-        close();
-        if (onExitToMenu != null) onExitToMenu.run();
     }
 
     private void close() {
-        if (dialogStage != null) dialogStage.close();
+        if (dialogStage != null) {
+            dialogStage.close();
+        }
     }
 }

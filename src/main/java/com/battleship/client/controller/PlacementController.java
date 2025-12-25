@@ -1,14 +1,17 @@
 package com.battleship.client.controller;
 
+import com.battleship.client.NetworkManager;
 import com.battleship.common.Game;
 import com.battleship.common.Message;
 import com.battleship.common.MessageType;
 import com.battleship.common.Ship;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -23,9 +26,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.net.Socket;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -33,28 +34,22 @@ public class PlacementController implements Initializable {
 
     @FXML private GridPane playerGrid;
     @FXML private Button readyButton;
+    @FXML private Button backButton;
     @FXML private Label statusLabel;
     @FXML private ComboBox<String> difficultyCombo;
-
     @FXML private Rectangle ship4Sample, ship3Sample, ship2Sample, ship1Sample;
     @FXML private Label count4Label, count3Label, count2Label, count1Label;
 
     private Game game;
-    private ObjectOutputStream out;
-    private ObjectInputStream in;
-    private Socket socket;
-
     private Rectangle selectedShip = null;
     private int selectedSize = 0;
     private boolean isVertical = false;
+    private Integer selectedShipType = null;
+    private int lastHighlightRow = -1;
+    private int lastHighlightCol = -1;
 
     private final Map<Integer, Integer> availableShips = new HashMap<>();
     private final Map<Integer, Integer> maxShips = new HashMap<>();
-
-    private Integer selectedShipType = null;
-
-    private int lastHighlightRow = -1;
-    private int lastHighlightCol = -1;
 
     private static final Color WATER = Color.web("#1e1e2e");
     private static final Color SHIP = Color.web("#89b4fa");
@@ -69,23 +64,68 @@ public class PlacementController implements Initializable {
         buildGrid();
         initShipCounts();
         statusLabel.setText("Выберите корабль.");
-        statusLabel.setStyle("-fx-text-fill: #cdd6f4; -fx-font-size: 16px;");
         difficultyCombo.setValue("Средний");
-    }
+        initNetworkHandlers();
 
-    public void initGame(Game game, ObjectOutputStream out, ObjectInputStream in, Socket socket) {
-        this.game = game;
-        this.out = out;
-        this.in = in;
-        this.socket = socket;
-        readyButton.setDisable(true);
-
-        updateShipVisuals();
-        playerGrid.getScene().setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.R && selectedShip != null) {
-                rotateSelected();
+        Platform.runLater(() -> {
+            if (statusLabel.getScene() != null) {
+                statusLabel.getScene().setOnKeyPressed(e -> {
+                    if (e.getCode() == KeyCode.R) {
+                        rotateSelected();
+                    }
+                });
             }
         });
+    }
+
+    private void initNetworkHandlers() {
+        NetworkManager nm = NetworkManager.getInstance();
+
+        nm.clearHandlers();
+
+        nm.registerHandler(MessageType.GAME_START, msg -> {
+            System.out.println("[Placement] Получен GAME_START");
+
+            if (msg.getPayload() instanceof Game newGame) {
+                System.out.println("[Placement] Открываю игровой экран...");
+                Platform.runLater(() -> openGameScreen(newGame));
+            }
+        });
+
+        nm.setOnErrorReceived(text -> {
+            System.out.println("[Placement] Ошибка: " + text);
+            Platform.runLater(() -> statusLabel.setText("Ошибка: " + text));
+        });
+    }
+
+    public void initGame(Game game) {
+        this.game = game;
+        readyButton.setDisable(true);
+        if (backButton != null) backButton.setDisable(false);
+        clearBoard();
+        updateShipVisuals();
+        statusLabel.setText("Выберите корабль.");
+    }
+
+    private void openGameScreen(Game game) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/battleship/client/view/game.fxml")
+            );
+            Parent root = loader.load();
+
+            GameController controller = loader.getController();
+            controller.initGame(game);
+
+            Stage stage = (Stage) statusLabel.getScene().getWindow();
+            stage.setScene(new Scene(root, 1500, 800));
+            stage.centerOnScreen();
+            stage.setTitle("Морской бой — Битва");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            statusLabel.setText("Ошибка загрузки FXML: " + e.getMessage());
+        }
     }
 
     private void buildGrid() {
@@ -250,7 +290,7 @@ public class PlacementController implements Initializable {
 
         game.playerShips.removeIf(s -> s == shipToRemove);
         for (int[] cell : shipToRemove.cells) {
-            game.playerField[cell[0]][cell[1]] = false;
+            game.playerField[cell[0]][cell[1]] = Game.CELL_EMPTY; // Исправлено
             getCellRect(cell[0], cell[1]).setFill(WATER);
         }
 
@@ -269,13 +309,14 @@ public class PlacementController implements Initializable {
             int r = isVertical ? row + i : row;
             int c = isVertical ? col : col + i;
 
-            if (game.playerField[r][c]) return false;
+            if (game.playerField[r][c] == Game.CELL_SHIP) return false;
 
             for (int dr = -1; dr <= 1; dr++) {
                 for (int dc = -1; dc <= 1; dc++) {
                     int nr = r + dr;
                     int nc = c + dc;
-                    if (nr >= 0 && nr < 10 && nc >= 0 && nc < 10 && game.playerField[nr][nc]) {
+                    if (nr >= 0 && nr < 10 && nc >= 0 && nc < 10 &&
+                            game.playerField[nr][nc] == Game.CELL_SHIP) {
                         return false;
                     }
                 }
@@ -290,7 +331,7 @@ public class PlacementController implements Initializable {
         for (int i = 0; i < selectedSize; i++) {
             int r = isVertical ? row + i : row;
             int c = isVertical ? col : col + i;
-            game.playerField[r][c] = true;
+            game.playerField[r][c] = Game.CELL_SHIP;
             ship.cells.add(new int[]{r, c});
             getCellRect(r, c).setFill(SHIP);
         }
@@ -316,7 +357,7 @@ public class PlacementController implements Initializable {
     private void clearHighlight() {
         for (int r = 0; r < 10; r++) {
             for (int c = 0; c < 10; c++) {
-                Color fillColor = game.playerField[r][c] ? SHIP : WATER;
+                Color fillColor = (game.playerField[r][c] == Game.CELL_SHIP) ? SHIP : WATER;
                 getCellRect(r, c).setFill(fillColor);
             }
         }
@@ -393,12 +434,13 @@ public class PlacementController implements Initializable {
         for (int i = 0; i < size; i++) {
             int r = vertical ? row + i : row;
             int c = vertical ? col : col + i;
-            if (game.playerField[r][c]) return false;
+            if (game.playerField[r][c] == Game.CELL_SHIP) return false;
             for (int dr = -1; dr <= 1; dr++) {
                 for (int dc = -1; dc <= 1; dc++) {
                     int nr = r + dr;
                     int nc = c + dc;
-                    if (nr >= 0 && nr < 10 && nc >= 0 && nc < 10 && game.playerField[nr][nc]) {
+                    if (nr >= 0 && nr < 10 && nc >= 0 && nc < 10 &&
+                            game.playerField[nr][nc] == Game.CELL_SHIP) {
                         return false;
                     }
                 }
@@ -413,7 +455,7 @@ public class PlacementController implements Initializable {
         for (int i = 0; i < size; i++) {
             int r = vertical ? row + i : row;
             int c = vertical ? col : col + i;
-            game.playerField[r][c] = true;
+            game.playerField[r][c] = Game.CELL_SHIP;
             ship.cells.add(new int[]{r, c});
             getCellRect(r, c).setFill(SHIP);
         }
@@ -426,7 +468,11 @@ public class PlacementController implements Initializable {
     }
 
     private void clearBoard() {
-        for (boolean[] row : game.playerField) Arrays.fill(row, false);
+        for (int i = 0; i < 10; i++) {
+            for (int j = 0; j < 10; j++) {
+                game.playerField[i][j] = Game.CELL_EMPTY;
+            }
+        }
         game.playerShips.clear();
 
         initShipCounts();
@@ -454,28 +500,36 @@ public class PlacementController implements Initializable {
     }
 
     @FXML
-    private void onReady() {
+    private void onBack() {
         try {
-            String difficulty = difficultyCombo.getValue();
-            if (difficulty == null) difficulty = "Средний";
-            game.difficulty = difficulty;
+            NetworkManager nm = NetworkManager.getInstance();
+            nm.unregisterHandler(MessageType.GAME_STATE);
 
-            out.writeObject(new Message(MessageType.PLACE_SHIPS, game));
-            out.flush();
-            statusLabel.setText("Ожидаем начала боя...");
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/battleship/client/view/game.fxml"));
-            Stage stage = (Stage) statusLabel.getScene().getWindow();
-            stage.setScene(new Scene(loader.load(), 1300, 800));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/com/battleship/client/view/lobby.fxml")
+            );
+            Stage stage = (Stage) playerGrid.getScene().getWindow();
+            stage.setScene(new Scene(loader.load(), 600, 700));
             stage.centerOnScreen();
-            stage.setTitle("Морской бой — Битва");
 
-            GameController controller = loader.getController();
-            controller.initGame(game, out, in, socket);
+            LobbyController controller = loader.getController();
+            controller.initData(game.playerName);
 
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
-            statusLabel.setText("Ошибка перехода в бой!");
         }
+    }
+
+    @FXML
+    private void onReady() {
+        String difficulty = difficultyCombo.getValue();
+        if (difficulty == null) difficulty = "Средний";
+        game.difficulty = difficulty;
+
+        NetworkManager.getInstance().send(MessageType.PLACE_SHIPS, game);
+
+        statusLabel.setText("Ожидаем начала боя...");
+        readyButton.setDisable(true);
+        if (backButton != null) backButton.setDisable(true);
     }
 }

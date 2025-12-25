@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+
+<VBox  fx:controller="com.battleship.client.controller.LoadGameController"
+       xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+       alignment="CENTER" spacing="30" style="-fx-background-color: #1e1e2e;">
+
+    <padding>
+        <Insets top="30" right="50" bottom="30" left="50"/>
+    </padding>
+
+    <Label text="Продолжить игру" textFill="#f9e2af" style="-fx-font-weight: bold;">
+        <font>
+            <Font size="40"/>
+        </font>
+    </Label>
+
+    <TableView fx:id="table" prefWidth="600" prefHeight="300">
+        <columns>
+            <TableColumn fx:id="nameColumn" text="Название" prefWidth="200"/>
+            <TableColumn fx:id="difficultColumn" text="Сложность" prefWidth="100"/>
+            <TableColumn fx:id="dateColumn" text="Дата" prefWidth="100"/>
+            <TableColumn fx:id="timeColumn" text="Время" prefWidth="100"/>
+            <TableColumn fx:id="sizeColumn" text="Размер (KB)" prefWidth="100"/>
+        </columns>
+    </TableView>
+
+    <VBox spacing="15">
+        <Button fx:id="loadButton" text="Загрузить" onAction="#onLoad"
+                style="-fx-background-color: #a6e3a1; -fx-text-fill: #1e1e2e; -fx-font-weight: bold;
+                       -fx-font-size: 18px; -fx-pref-width: 300; -fx-pref-height: 60;"/>
+        <Button fx:id="deleteButton" text="Удалить" onAction="#onDelete"
+                style="-fx-background-color: #f38ba8; -fx-text-fill: white; -fx-font-weight: bold;
+                       -fx-font-size: 18px; -fx-pref-width: 300; -fx-pref-height: 60;"/>
+        <Button fx:id="backButton" text="Назад" onAction="#onBack"
+                style="-fx-background-color: #585b70; -fx-text-fill: white; -fx-font-weight: bold;
+                       -fx-font-size: 18px; -fx-pref-width: 300; -fx-pref-height: 60;"/>
+    </VBox>
+
+    <Label fx:id="statusLabel" text="" textFill="#f38ba8"/>
+</VBox>
